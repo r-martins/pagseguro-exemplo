@@ -1,0 +1,11 @@
+readme.*
+about.*
+license.*
+copyright.*
+changelog.*
+credit.*
+faq.*
+\.travis.*
+\.git.*
+modman
+composer\.json
