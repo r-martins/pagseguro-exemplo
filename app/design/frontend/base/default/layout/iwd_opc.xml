@@ -53,7 +53,7 @@
                     
                     <!-- COUPON FORM -->
                     <block type="checkout/cart_coupon" name="checkout.cart.coupon" as="coupon" template="opc/onepage/coupon.phtml"/>
-                    
+
                     <!-- COMMENT FORM -->
                     <block type="opc/onepage_comment" name="checkout.order.comment" as="customer.comment"/>
                     
