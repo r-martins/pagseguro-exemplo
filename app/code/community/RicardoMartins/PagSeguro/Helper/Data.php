@@ -9,9 +9,13 @@ class RicardoMartins_PagSeguro_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_PAYMENT_PAGSEGURO_SANDBOX_EMAIL  = 'payment/pagseguro/sandbox_merchant_email';
     const XML_PATH_PAYMENT_PAGSEGURO_SANDBOX_TOKEN  = 'payment/pagseguro/sandbox_token';
     const XML_PATH_PAYMENT_PAGSEGURO_WS_URL         = 'payment/pagseguro/ws_url';
+    const XML_PATH_PAYMENT_PAGSEGURO_WS_URL_APP     = 'payment/pagseguro/ws_url_app';
     const XML_PATH_PAYMENT_PAGSEGURO_JS_URL         = 'payment/pagseguro/js_url';
     const XML_PATH_PAYMENT_PAGSEGURO_SANDBOX_WS_URL = 'payment/pagseguro/sandbox_ws_url';
+    const XML_PATH_PAYMENT_PAGSEGURO_SANDBOX_WS_URL_APP = 'payment/pagseguro/sandbox_ws_url_app';
     const XML_PATH_PAYMENT_PAGSEGURO_SANDBOX_JS_URL = 'payment/pagseguro/sandbox_js_url';
+    const XML_PATH_PAYMENT_PAGSEGURO_KEY_TYPE       = 'payment/pagseguropro/key_type';
+    const XML_PATH_PAYMENT_PAGSEGURO_KEY       = 'payment/pagseguropro/key';
 
 
     /**
@@ -21,10 +25,14 @@ class RicardoMartins_PagSeguro_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getSessionId()
     {
-        $client = new Zend_Http_Client($this->getWsUrl('sessions'));
+        $useapp = $this->getLicenseType() == 'app';
+        $client = new Zend_Http_Client($this->getWsUrl('sessions',$useapp));
         $client->setMethod(Zend_Http_Client::POST);
-        $client->setParameterGet('email', $this->getMerchantEmail());
-        $client->setParameterGet('token', $this->getToken());
+        $client->setParameterPost('email', $this->getMerchantEmail());
+        $client->setParameterPost('token', $this->getToken());
+        if($useapp){
+            $client->setParameterPost('public_key',$this->getPagSeguroProKey());
+        }
         $client->setConfig(array('timeout'=>30));
         try{
             $response = $client->request();
@@ -60,15 +68,25 @@ class RicardoMartins_PagSeguro_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Retorna URL do Webservice do Pagseguro de acordo com o ambiente selecionado
      * @param string $amend acrescenta algo no final
+     * @param bool $useapp usa modelo de aplicacao
      *
      * @return string
      */
-    public function getWsUrl($amend='')
+    public function getWsUrl($amend='', $useapp = false)
     {
         if($this->isSandbox())
         {
-            return Mage::getStoreConfig(self::XML_PATH_PAYMENT_PAGSEGURO_SANDBOX_WS_URL) . $amend;
+            if($this->getLicenseType()=='app' && $useapp){
+                return Mage::getStoreConfig(self::XML_PATH_PAYMENT_PAGSEGURO_SANDBOX_WS_URL_APP) . $amend;;
+            }else{
+                return Mage::getStoreConfig(self::XML_PATH_PAYMENT_PAGSEGURO_SANDBOX_WS_URL) . $amend;
+            }
         }
+
+        if($this->getLicenseType()=='app' || $useapp){
+            return Mage::getStoreConfig(self::XML_PATH_PAYMENT_PAGSEGURO_WS_URL_APP) . $amend;
+        }
+
         return Mage::getStoreConfig(self::XML_PATH_PAYMENT_PAGSEGURO_WS_URL) . $amend;
     }
 
@@ -145,5 +163,43 @@ class RicardoMartins_PagSeguro_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $customer_cpf_attribute = Mage::getStoreConfig('payment/pagseguro/customer_cpf_attribute');
         return empty($customer_cpf_attribute);
+    }
+
+    /**
+     * Retorna o tipo de licença (se houver)
+     * @return string
+     */
+    public function getLicenseType()
+    {
+        return Mage::getStoreConfig(self::XML_PATH_PAYMENT_PAGSEGURO_KEY_TYPE);
+    }
+
+    /**
+     * Retorna chave do PagSeguro PRO (se houver)
+     * @return string
+     */
+    public function getPagSeguroProKey()
+    {
+        return Mage::getStoreConfig(self::XML_PATH_PAYMENT_PAGSEGURO_KEY);
+    }
+
+    /**
+     * Faz a tradução dos termos dinamicos do PagSeguro
+     * @author Ricardo Martins
+     * @return string
+     */
+    public function __(){
+        $args = func_get_args();
+        $expr = new Mage_Core_Model_Translate_Expr(array_shift($args), $this->_getModuleName());
+        array_unshift($args, $expr);
+
+        $text = $args[0]->getText();
+        preg_match('/(.*)\:(.*)/',$text, $matches);
+        if($matches!==false && isset($matches[1])){
+            array_shift($matches);
+            $matches[0] .= ': %s';
+            $args = $matches;
+        }
+        return Mage::app()->getTranslator()->translate($args);
     }
 }

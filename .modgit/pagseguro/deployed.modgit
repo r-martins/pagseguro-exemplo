@@ -19,6 +19,7 @@ app/code/community/RicardoMartins/PagSeguro/Model/Source/Customer/Attributes.php
 app/code/community/RicardoMartins/PagSeguro/Model/Source/Customer/Cpf.php
 app/code/community/RicardoMartins/PagSeguro/Model/Source/Customer/Dob.php
 app/code/community/RicardoMartins/PagSeguro/Model/Source/Paymentmethods.php
+app/code/community/RicardoMartins/PagSeguro/Model/System/Config/Source/Customer/Groups.php
 app/design/adminhtml/base/default/template/ricardomartins_pagseguro/form/directpayment.phtml
 app/design/adminhtml/base/default/template/ricardomartins_pagseguro/form/info/cc.phtml
 app/design/frontend/base/default/template/ricardomartins_pagseguro/form/cc/dob.phtml

@@ -30,14 +30,13 @@
         <payment>
             <groups>
                 <pagseguro module="ricardomartins_pagseguro">
-                    <comment><![CDATA[<a href="http://r-martins.github.io/PagSeguro-Magento-Transparente" target="_blank">Precisa de ajuda?</a><br/> Lembre-se de <a href="https://pagseguro.uol.com.br/receba-pagamentos.jhtml#checkout-transparent" target="_blank">solicitar acesso</a> à API transparente.<br/>Para suporte a TEF e Boleto, solicite a <a href="http://r-martins.github.io/PagSeguro-Magento-Transparente/pro" target="_blank">versão PRO</a>.]]></comment>
+                    <comment><![CDATA[<a href="http://r-martins.github.io/PagSeguro-Magento-Transparente" target="_blank">Precisa de ajuda?</a><br/> Lembre-se de <a href="https://pagseguro.uol.com.br/receba-pagamentos.jhtml#checkout-transparent" target="_blank">solicitar acesso</a> à API transparente ou <a href="http://r-martins.github.io/PagSeguro-Magento-Transparente/pro/app.html"><strong>autorize sua conta</strong></a> com o modelo de aplicação.<br/>Para suporte a TEF e Boleto, solicite a versão PRO <a href="http://r-martins.github.io/PagSeguro-Magento-Transparente/pro" target="_blank">aqui</a> ou autorize sua conta para o modelo de aplicação.<a href="http://r-martins.github.io/PagSeguro-Magento-Transparente"></a>]]></comment>
                     <label>PagSeguro - Ricardo Martins</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>110</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
-                    <!--<comment><![CDATA[<a href="http://celinks.magento.com/authorize_netRegistration" target="_blank">Click here to sign up for an Authorize.net account</a>]]></comment>-->
                     <fields>
                         <merchant_email translate="label">
                             <label>E-mail</label>
@@ -66,7 +65,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <comment><![CDATA[No modo de testes, os dados são enviados para sandbox do PagSeguro. Habilite o acesso à Sandbox <a href="http://sandbox.pagseguro.uol.com.br" target="_blank">aqui</a>]]></comment>
+                            <comment><![CDATA[No modo de testes, os dados são enviados para sandbox do PagSeguro. Habilite o acesso à Sandbox <a href="http://sandbox.pagseguro.uol.com.br/" target="_blank">aqui</a>]]></comment>
                         </sandbox>
                         <sandbox_merchant_email translate="label">
                             <label>E-mail Sandbox</label>
@@ -221,6 +220,28 @@
                             <show_in_store>0</show_in_store>
                             <frontend_class>validate-number</frontend_class>
                         </sort_order>
+                        <group_restriction>
+                            <label>Habilitar restrição por grupos</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>50</sort_order>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </group_restriction>
+                        <customer_groups>
+                            <label>Grupos de Cliente</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>ricardomartins_pagseguro/system_config_source_customer_groups</source_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Grupos de clientes que podem usar este método.]]></comment>
+                            <depends>
+                                <group_restriction>1</group_restriction>
+                            </depends>
+                        </customer_groups>
                     </fields>
                 </pagseguro_cc>
             </groups>
