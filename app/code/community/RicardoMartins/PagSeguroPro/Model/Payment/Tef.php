@@ -52,6 +52,14 @@ class RicardoMartins_PagSeguroPro_Model_Payment_Tef extends RicardoMartins_PagSe
             }
             Mage::throwException('Um ou mais erros ocorreram no seu pagamento.' . PHP_EOL . implode(PHP_EOL,$errMsg));
         }
+        if (isset($xmlRetorno->error->message)) {
+            $helper = Mage::helper('ricardomartins_pagseguro');
+            $msg = 'Um erro ocorreu: ' . $helper->__((string)$xmlRetorno->error->message);
+            if ($xmlRetorno->error->code == 53085) {
+                $msg .= ' Selecione outro banco ou outra forma de pagamento.';
+            }
+            Mage::throwException($msg);
+        }
 
         $payment->setSkipOrderProcessing(true);
 
